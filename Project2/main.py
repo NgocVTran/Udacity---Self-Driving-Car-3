@@ -34,16 +34,16 @@ def load_vgg(sess, vgg_path):
     vgg_layer4_out_tensor_name = 'layer4_out:0'
     vgg_layer7_out_tensor_name = 'layer7_out:0'
 
+    graph = tf.get_default_graph()
     tf.saved_model.loader.load(sess, [vgg_tag], vgg_path)
 
-    graph = tf.get_default_graph()
     w1 = graph.get_tensor_by_name(vgg_input_tensor_name)
-    keep = graph.get_tensor_by_name(vgg_keep_prob_tensor_name)
+    keep_prob = graph.get_tensor_by_name(vgg_keep_prob_tensor_name)
     layer3 = graph.get_tensor_by_name(vgg_layer3_out_tensor_name)
     layer4 = graph.get_tensor_by_name(vgg_layer4_out_tensor_name)
     layer7 = graph.get_tensor_by_name(vgg_layer7_out_tensor_name)
 
-    return w1, keep, layer3, layer4, layer7
+    return w1, keep_prob, layer3, layer4, layer7
 tests.test_load_vgg(load_vgg, tf)
 
 
@@ -155,11 +155,11 @@ def train_nn(sess, epochs, batch_size, get_batches_fn, train_op, cross_entropy_l
                                    input_image: image,
                                    correct_label: label,
                                    keep_prob: 0.7,
-                                   learning_rate: 1e-4
+                                   learning_rate: 0.0001
                                })
             print("Loss: {:.3f}".format(loss))
-
 tests.test_train_nn(train_nn)
+
 
 def run():
     num_classes = 2
@@ -188,24 +188,22 @@ def run():
         input_image, keep_prob, layer3_out, layer4_out, layer7_out = load_vgg(sess, vgg_path)
         layer_output = layers(layer3_out, layer4_out, layer7_out, num_classes)
 
-        correct_label = tf.placeholder(dtype=tf.float32, shape=(None, None, None, num_classes), name='correct_label')
+        correct_label = tf.placeholder(dtype=tf.int32, shape=(None, None, None, num_classes), name='correct_label')
         learning_rate = tf.placeholder(dtype=tf.float32, name='learning_rate')
 
         logits, train_op, cross_entropy_loss = optimize(layer_output, correct_label, learning_rate, num_classes)
-
-        sess.run(tf.global_variables_initializer())
-
 
         # TODO: Train NN using the train_nn function
         train_nn(sess, epochs=50, batch_size=5, get_batches_fn=get_batches_fn,
                  train_op=train_op, cross_entropy_loss=cross_entropy_loss,
                  input_image=input_image, correct_label=correct_label,
-                 keep_prob=0.7, learning_rate=1e-4)
+                 keep_prob=keep_prob, learning_rate=learning_rate)
 
         # TODO: Save inference data using helper.save_inference_samples
         helper.save_inference_samples(runs_dir, data_dir, sess, image_shape, logits, keep_prob, input_image)
 
         # OPTIONAL: Apply the trained model to a video
+
 
 
 if __name__ == '__main__':
