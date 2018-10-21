@@ -64,6 +64,15 @@ the path has processed since last time.
 
 A really helpful resource for doing this project and creating smooth trajectories was using http://kluge.in-chemnitz.de/opensource/spline/, the spline function is in a single hearder file is really easy to use.
 
+## Implementation
+According to the seed project's code, the path planning algorithms is reparated into two parts:
+
+1. Prediction:
+Based on the sensor fusion data, the car will know that is there anything blocking in front of it, or is this safe to make a lane change to the left or right, then the algorithms predicts car's position and try to give the best decision in each case.
+
+2. Behavior
+Based on the prediction of above, the algorithms decided to increase, decrease speed, or should the car make a lane change.
+
 ---
 
 ## Dependencies
