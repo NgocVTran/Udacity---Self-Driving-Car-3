@@ -1,0 +1,8 @@
+prefix=/mnt/c/workspace/Udacity/Udacity---Self-Driving-Car-3/CarND-Capstone/ros/devel
+
+Name: styx_msgs
+Description: Description of styx_msgs
+Version: 0.0.0
+Cflags: -I/mnt/c/workspace/Udacity/Udacity---Self-Driving-Car-3/CarND-Capstone/ros/devel/include
+Libs: -L/mnt/c/workspace/Udacity/Udacity---Self-Driving-Car-3/CarND-Capstone/ros/devel/lib 
+Requires: 
