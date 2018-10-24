@@ -38,19 +38,11 @@ class Controller(object):
         # TODO: Change the arg, kwarg list to suit your needs
         # Return throttle, brake, steer
 
-        # return 1., 0., 0.
-
         if not dbw_enabled:
             self.throttle_controller.reset()
             return 0.0, 0.0, 0.0
 
         current_vel = self.vel_lpf.filt(current_vel)
-
-        # rospy.logwarn("Angular vel: {0}".format(angular_vel))
-        # rospy.logwarn("Target velocity: {0}".format(linear_vel))
-        # rospy.logwarn("Target angular velocity: {0}\n".format(angular_vel))
-        # rospy.logwarn("Current velocity: {0}".format(current_vel))
-        # rospy.logwarn("Filtered velocity: {0}".format(self.vel_lpf.get()))
 
         steering = self.yaw_controller.get_steering(linear_vel, angular_vel, current_vel)
 
@@ -66,12 +58,11 @@ class Controller(object):
 
         if linear_vel == 0.0 and current_vel < 0.1:
             throttle = 0
-            brake = 400 # N*m - to hold the car in place if  we are stopped at a light. Acceleration ~ 1m/s^2
-            # To prevent Carla from moving you should applu approximately 700 N*m of torque.
+            brake = 400 
 
         elif throttle < 0.1 and vel_error < 0:
             throttle = 0
             decel = max(vel_error, self.decel_limit)
-            brake = abs(decel) * self.vehicle_mass * self.wheel_radius # Torque N*m
-
+			
+		# return 1., 0., 0.
         return throttle, brake, steering
